@@ -234,10 +234,9 @@ function! s:create_on_exit_callback(opts)
 
         let fname = s:nnn_conf_dir.'/.lastd'
         if !empty(glob(fname))
-            let firstline = readfile(fname)[0]
-            let parts = split(firstline, '"')
-            if len(parts) > 1
-                let lastd = parts[1]
+            let firstline = get(readfile(fname), 0, '')
+            let lastd = substitute(matchstr(firstline, '^cd [''"]\zs.*\ze[''"]$'), "'\\\\''", "'", 'g')
+            if !empty(lastd)
                 execute 'cd' fnameescape(lastd)
             endif
             call delete(fnameescape(fname))
